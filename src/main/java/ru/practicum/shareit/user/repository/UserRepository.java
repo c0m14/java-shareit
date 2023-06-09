@@ -9,7 +9,7 @@ public interface UserRepository {
 
     User add(User user);
 
-    User update(Long user_id, User user);
+    User update(Long userId, User user);
 
     Optional<User> getById(Long id);
 

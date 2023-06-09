@@ -19,8 +19,8 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public User update(Long user_id, User user) {
-        repository.put(user_id, user);
+    public User update(Long userId, User user) {
+        repository.put(userId, user);
         return user;
     }
 
