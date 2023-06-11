@@ -24,5 +24,6 @@ public class ItemDto {
     private String description;
     @NotNull(groups = OnCreateValidationGroup.class)
     private Boolean available;
+    private Long itemRequestId;
 
 }

@@ -27,10 +27,7 @@ public class InMemoryUserRepository implements UserRepository {
     @Override
     public Optional<User> getById(Long id) {
         User requestedUser = repository.get(id);
-        if (requestedUser == null) {
-            return Optional.empty();
-        }
-        return Optional.of(requestedUser);
+        return Optional.ofNullable(requestedUser);
     }
 
     @Override
@@ -45,11 +42,8 @@ public class InMemoryUserRepository implements UserRepository {
 
     @Override
     public boolean isEmailExist(String email) {
-        Optional<String> duplicateEmail = repository.values().stream()
+        return repository.values().stream()
                 .map(User::getEmail)
-                .filter(savedEmail -> savedEmail.equals(email))
-                .findFirst();
-
-        return duplicateEmail.isPresent();
+                .anyMatch(savedEmail -> savedEmail.equals(email));
     }
 }

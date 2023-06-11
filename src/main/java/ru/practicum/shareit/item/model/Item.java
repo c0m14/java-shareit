@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.model;
 
 import lombok.Builder;
 import lombok.Data;
+import ru.practicum.shareit.request.ItemRequest;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -25,6 +26,7 @@ public class Item {
     private Long ownerId;
     @NotNull
     private Boolean available;
+    private ItemRequest request;
 
     @Override
     public boolean equals(Object o) {
