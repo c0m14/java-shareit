@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.DuplicateEntityException;
 import ru.practicum.shareit.exception.InvalidParamException;
 import ru.practicum.shareit.exception.NotExistsException;
-import ru.practicum.shareit.user.UserMapper;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -41,14 +41,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto update(Long userId, UserDto userDto) {
-        Optional<User> requestedUser = userRepository.getById(userId);
-        if (requestedUser.isEmpty()) {
-            throw new NotExistsException(
-                    "User",
-                    String.format("User with id %d does not exist", userId)
-            );
-        }
-        User updatedUser = requestedUser.get();
+        User updatedUser = userRepository.getById(userId).orElseThrow(
+                () -> new NotExistsException(
+                        "User",
+                        String.format("User with id %d does not exist", userId)
+                )
+        );
         if (!updatedUser.getEmail().equals(userDto.getEmail())) {
             if (userRepository.isEmailExist(userDto.getEmail())) {
                 throw new DuplicateEntityException(
