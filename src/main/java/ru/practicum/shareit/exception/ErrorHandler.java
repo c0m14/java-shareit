@@ -85,7 +85,7 @@ public class ErrorHandler {
     private class ErrorResponse {
 
         private String paramName;
-        private String errorDescription;
+        private String error;
 
     }
 

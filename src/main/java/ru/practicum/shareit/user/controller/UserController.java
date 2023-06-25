@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.user.dto.UserCreateDto;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
-import ru.practicum.shareit.util.OnCreateValidationGroup;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -23,10 +23,9 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping()
-    @Validated(OnCreateValidationGroup.class)
-    public UserDto add(@RequestBody @Valid UserDto userDto) {
-        log.info("Got request to add user {}", userDto);
-        return userService.add(userDto);
+    public UserDto add(@RequestBody @Valid UserCreateDto userCreateDto) {
+        log.info("Got request to add user {}", userCreateDto);
+        return userService.add(userCreateDto);
     }
 
     @PatchMapping("/{id}")
