@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.LastNextBookingDto;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
@@ -43,6 +44,7 @@ public class ItemServiceImpl implements ItemService {
     private final Sort sortByEndDesc = Sort.by(Sort.Direction.DESC, "end");
 
     @Override
+    @Transactional
     public ItemDto add(Long userId, ItemCreateDto itemCreateDto) {
         User owner = getUserById(userId);
         Item item = itemMapper.mapToItem(itemCreateDto, owner);
@@ -51,6 +53,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public ItemDto update(Long userId, Long itemId, ItemDto itemDto) {
         Item updatedItem = getItemById(itemId);
         validateIfUserIsOwner(updatedItem, userId);
@@ -105,6 +108,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public CommentDto addComment(Long authorId, Long itemId, CommentDto commentDto) {
         User author = getUserById(authorId);
         Item item = getItemById(itemId);

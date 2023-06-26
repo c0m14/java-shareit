@@ -4,6 +4,7 @@ package ru.practicum.shareit.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.DuplicateEntityException;
 import ru.practicum.shareit.exception.NotExistsException;
 import ru.practicum.shareit.user.dto.UserCreateDto;
@@ -23,6 +24,7 @@ public class UserServiceImpl implements UserService {
     private final UserMapper mapper;
 
     @Override
+    @Transactional
     public UserDto add(UserCreateDto userCreateDto) {
         User user = mapper.mapToUser(userCreateDto);
         try {
@@ -38,6 +40,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDto update(Long userId, UserDto userDto) {
         User updatedUser = userRepository.findById(userId).orElseThrow(
                 () -> new NotExistsException(
@@ -71,32 +74,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         userRepository.deleteById(id);
     }
 
-    private void checkDuplicateEmail(User user) {
-        if (user.getEmail() == null) {
-            return;
-        }
+    private void checkDuplicateEmail(String email, Long userId) {
 
-        Optional<User> userWithSameEmailOptional = userRepository.findByEmail(user.getEmail());
+        Optional<User> userWithSameEmailOptional = userRepository.findByEmail(email);
         if (userWithSameEmailOptional.isEmpty()) {
             return;
         }
 
-        if (!userWithSameEmailOptional.get().equals(user)) {
+        if (!userWithSameEmailOptional.get().getId().equals(userId)) {
             throw new DuplicateEntityException(
                     "Email",
-                    String.format("User with email %s already exists", user.getEmail())
+                    String.format("User with email %s already exists", email)
             );
         }
     }
 
     private void updateFields(User updatedUser, UserDto userDto) {
         if (userDto.getEmail() != null) {
+            checkDuplicateEmail(userDto.getEmail(), updatedUser.getId());
             updatedUser.setEmail(userDto.getEmail());
-            checkDuplicateEmail(updatedUser);
         }
         if (userDto.getName() != null) {
             updatedUser.setName(userDto.getName());

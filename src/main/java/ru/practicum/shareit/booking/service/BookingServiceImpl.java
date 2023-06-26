@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingCreationDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingStateSearchDto;
@@ -37,6 +38,7 @@ public class BookingServiceImpl implements BookingService {
     private final Sort sortByStartDesc = Sort.by(Sort.Direction.DESC, "start");
 
     @Override
+    @Transactional
     public BookingDto add(Long bookerId, BookingCreationDto bookingCreationDto) {
         User booker = getUserById(bookerId);
         Item item = getItemById(bookingCreationDto.getItemId());
@@ -58,6 +60,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    @Transactional
     public BookingDto changeStatus(Long itemOwnerId, Long bookingId, boolean approved) {
         Booking booking = getBookingById(bookingId);
         Item item = booking.getItem();

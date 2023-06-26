@@ -1,9 +1,6 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
@@ -16,8 +13,10 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "item")
-@Data
 @Builder
+@Getter
+@Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class Item {
@@ -32,6 +31,7 @@ public class Item {
     @Column(name = "description")
     private String description;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", referencedColumnName = "user_id")
     private User owner;
@@ -39,7 +39,8 @@ public class Item {
     @Column(name = "available")
     private Boolean available;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "request_id")
     private ItemRequest itemRequest;
 
