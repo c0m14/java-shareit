@@ -2,12 +2,14 @@ package ru.practicum.shareit.user.service;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.DuplicateEntityException;
-import ru.practicum.shareit.exception.InvalidParamException;
 import ru.practicum.shareit.exception.NotExistsException;
-import ru.practicum.shareit.user.mapper.UserMapper;
+import ru.practicum.shareit.user.dto.UserCreateDto;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -19,74 +21,87 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
+    private final UserMapper mapper;
 
     @Override
-    public UserDto add(UserDto userDto) {
-        if (userDto.getId() != null) {
-            throw new InvalidParamException(
-                    "User id",
-                    "Id should not been sent in creation request"
+    @Transactional
+    public UserDto add(UserCreateDto userCreateDto) {
+        User user = mapper.mapToUser(userCreateDto);
+        try {
+            return mapper.mapToDto(
+                    userRepository.save(user)
             );
-        }
-        if (userRepository.isEmailExist(userDto.getEmail())) {
+        } catch (DataIntegrityViolationException e) {
             throw new DuplicateEntityException(
                     "Email",
-                    String.format("User with email %s already exists", userDto.getEmail())
+                    String.format("User with email %s already exists", user.getEmail())
             );
         }
-        User user = userMapper.mapToUser(userDto);
-        return userMapper.mapToDto(userRepository.add(user));
     }
 
     @Override
+    @Transactional
     public UserDto update(Long userId, UserDto userDto) {
-        User updatedUser = userRepository.getById(userId).orElseThrow(
+        User updatedUser = userRepository.findById(userId).orElseThrow(
                 () -> new NotExistsException(
                         "User",
                         String.format("User with id %d does not exist", userId)
                 )
         );
-        if (!updatedUser.getEmail().equals(userDto.getEmail())) {
-            if (userRepository.isEmailExist(userDto.getEmail())) {
-                throw new DuplicateEntityException(
-                        "Email",
-                        String.format("User with email %s already exists", userDto.getEmail())
-                );
-            }
-        }
-        if (userDto.getName() != null) {
-            updatedUser.setName(userDto.getName());
-        }
-        if (userDto.getEmail() != null) {
-            updatedUser.setEmail(userDto.getEmail());
-        }
 
-        return userMapper.mapToDto(userRepository.update(userId, updatedUser));
+        updateFields(updatedUser, userDto);
+
+        return mapper.mapToDto(
+                userRepository.save(updatedUser)
+        );
     }
 
     @Override
     public UserDto getById(Long id) {
-        Optional<User> requestedUser = userRepository.getById(id);
-
-        return userMapper.mapToDto(
-                requestedUser.orElseThrow(() -> new NotExistsException(
+        return mapper.mapToDto(
+                userRepository.findById(id).orElseThrow(() -> new NotExistsException(
                         "User",
-                        String.format("User with id %d does not exist", id)
-                )));
+                        String.format("User with id %d does not exist", id)))
+        );
     }
 
     @Override
     public List<UserDto> getAll() {
-        return userRepository.getAll()
+        return userRepository.findAll()
                 .stream()
-                .map(userMapper::mapToDto)
+                .map(mapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
-        userRepository.delete(id);
+        userRepository.deleteById(id);
+    }
+
+    private void checkDuplicateEmail(String email, Long userId) {
+
+        Optional<User> userWithSameEmailOptional = userRepository.findByEmail(email);
+        if (userWithSameEmailOptional.isEmpty()) {
+            return;
+        }
+
+        if (!userWithSameEmailOptional.get().getId().equals(userId)) {
+            throw new DuplicateEntityException(
+                    "Email",
+                    String.format("User with email %s already exists", email)
+            );
+        }
+    }
+
+    private void updateFields(User updatedUser, UserDto userDto) {
+        if (userDto.getEmail() != null) {
+            checkDuplicateEmail(userDto.getEmail(), updatedUser.getId());
+            updatedUser.setEmail(userDto.getEmail());
+        }
+        if (userDto.getName() != null) {
+            updatedUser.setName(userDto.getName());
+        }
     }
 
 }

@@ -1,6 +1,8 @@
 package ru.practicum.shareit.user.mapper;
 
 import org.springframework.stereotype.Component;
+import ru.practicum.shareit.user.dto.UserBookingDto;
+import ru.practicum.shareit.user.dto.UserCreateDto;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
@@ -15,11 +17,16 @@ public class UserMapper {
                 .build();
     }
 
-    public User mapToUser(UserDto userDto) {
+    public UserBookingDto mapToBookingDto(User user) {
+        return UserBookingDto.builder()
+                .id(user.getId())
+                .build();
+    }
+
+    public User mapToUser(UserCreateDto userCreateDto) {
         return User.builder()
-                .id(userDto.getId())
-                .name(userDto.getName())
-                .email(userDto.getEmail())
+                .name(userCreateDto.getName())
+                .email(userCreateDto.getEmail())
                 .build();
     }
 }
