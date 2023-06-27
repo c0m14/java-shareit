@@ -6,6 +6,7 @@ import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * TODO Sprint add-controllers.
@@ -40,9 +41,9 @@ public class Item {
     private Boolean available;
 
     @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "request_id")
-    private ItemRequest itemRequest;
+    private Set<ItemRequest> itemRequest;
 
     @Override
     public boolean equals(Object o) {
