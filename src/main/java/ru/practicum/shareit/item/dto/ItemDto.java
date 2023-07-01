@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.Size;
+import java.util.Set;
 
 /**
  * TODO Sprint add-controllers.
@@ -18,6 +19,6 @@ public class ItemDto {
     @Size(max = 200)
     private String description;
     private Boolean available;
-    private Long itemRequestId;
+    private Set<Long> itemRequestIds;
 
 }

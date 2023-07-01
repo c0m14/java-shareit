@@ -43,7 +43,7 @@ public class Item {
     @ToString.Exclude
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "request_id")
-    private Set<ItemRequest> itemRequest;
+    private Set<ItemRequest> itemRequests;
 
     @Override
     public boolean equals(Object o) {
