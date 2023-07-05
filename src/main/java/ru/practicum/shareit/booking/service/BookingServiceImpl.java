@@ -1,6 +1,8 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +23,6 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -103,102 +104,109 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getByStateBooker(Long bookerId, String state) {
+    public List<BookingDto> getByStateBooker(Long bookerId, String state, int from, int size) {
         BookingStateSearchDto bookingState = getBookingState(state);
         validateIfUserExist(bookerId);
-        List<Booking> requestedBookings = new ArrayList<>();
+        Page<Booking> requestedBookings = null;
+        PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size, sortByStartDesc);
+
 
         switch (bookingState) {
             case ALL:
-                requestedBookings = bookingRepository.findByBookerId(bookerId, sortByStartDesc);
+                requestedBookings = bookingRepository.findByBookerId(pageRequest, bookerId);
                 break;
             case CURRENT:
                 requestedBookings = bookingRepository.findByBookerIdAndEndIsAfterAndStartIsBefore(
+                        pageRequest,
                         bookerId,
                         LocalDateTime.now(),
-                        LocalDateTime.now(),
-                        sortByStartDesc
+                        LocalDateTime.now()
                 );
                 break;
             case PAST:
                 requestedBookings = bookingRepository.findByBookerIdAndEndIsBefore(
+                        pageRequest,
                         bookerId,
-                        LocalDateTime.now(),
-                        sortByStartDesc
+                        LocalDateTime.now()
                 );
                 break;
             case FUTURE:
                 requestedBookings = bookingRepository.findByBookerIdAndStartIsAfter(
+                        pageRequest,
                         bookerId,
-                        LocalDateTime.now(),
-                        sortByStartDesc
+                        LocalDateTime.now()
                 );
                 break;
             case WAITING:
                 requestedBookings = bookingRepository.findByBookerIdAndState(
+                        pageRequest,
                         bookerId,
                         BookingState.WAITING
                 );
                 break;
             case REJECTED:
                 requestedBookings = bookingRepository.findByBookerIdAndState(
+                        pageRequest,
                         bookerId,
                         BookingState.REJECTED
                 );
                 break;
         }
 
-        return bookingMapper.mapToListDto(requestedBookings);
+        return bookingMapper.mapToListDto(requestedBookings.toList());
     }
 
     @Override
-    public List<BookingDto> getByStateOwner(Long ownerId, String state) {
+    public List<BookingDto> getByStateOwner(Long ownerId, String state, int from, int size) {
         BookingStateSearchDto bookingState = getBookingState(state);
         validateIfUserExist(ownerId);
         validateIfUserHasItems(ownerId);
-        List<Booking> requestedBookings = new ArrayList<>();
+        Page<Booking> requestedBookings = null;
+        PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size, sortByStartDesc);
 
         switch (bookingState) {
             case ALL:
-                requestedBookings = bookingRepository.findByItemOwnerId(ownerId, sortByStartDesc);
+                requestedBookings = bookingRepository.findByItemOwnerId(pageRequest, ownerId);
                 break;
             case CURRENT:
                 requestedBookings = bookingRepository.findByItemOwnerIdAndEndIsAfterAndStartIsBefore(
+                        pageRequest,
                         ownerId,
                         LocalDateTime.now(),
-                        LocalDateTime.now(),
-                        sortByStartDesc
+                        LocalDateTime.now()
                 );
                 break;
             case PAST:
                 requestedBookings = bookingRepository.findByItemOwnerIdAndEndIsBefore(
+                        pageRequest,
                         ownerId,
-                        LocalDateTime.now(),
-                        sortByStartDesc
+                        LocalDateTime.now()
                 );
                 break;
             case FUTURE:
                 requestedBookings = bookingRepository.findByItemOwnerIdAndStartIsAfter(
+                        pageRequest,
                         ownerId,
-                        LocalDateTime.now(),
-                        sortByStartDesc
+                        LocalDateTime.now()
                 );
                 break;
             case WAITING:
                 requestedBookings = bookingRepository.findByItemOwnerIdAndState(
+                        pageRequest,
                         ownerId,
                         BookingState.WAITING
                 );
                 break;
             case REJECTED:
                 requestedBookings = bookingRepository.findByItemOwnerIdAndState(
+                        pageRequest,
                         ownerId,
                         BookingState.REJECTED
                 );
                 break;
         }
 
-        return bookingMapper.mapToListDto(requestedBookings);
+        return bookingMapper.mapToListDto(requestedBookings.toList());
     }
 
     private void validateIfUserExist(Long userId) {

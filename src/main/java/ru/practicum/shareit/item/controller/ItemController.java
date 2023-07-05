@@ -8,9 +8,11 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemCreateDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemWithBookingsAndCommentsDto;
+import ru.practicum.shareit.item.dto.requestParam.*;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 /**
@@ -29,7 +31,8 @@ public class ItemController {
     public ItemDto add(@RequestHeader("X-Sharer-User-Id") Long userId,
                        @RequestBody @Valid ItemCreateDto itemCreateDto) {
 
-        log.info("Got request to add item {} from user with id {}", itemCreateDto, userId);
+        CreateRequestParams requestParams = new CreateRequestParams(userId, itemCreateDto);
+        log.info("Got request to add item with: {}", requestParams);
         return itemService.add(userId, itemCreateDto);
     }
 
@@ -38,8 +41,8 @@ public class ItemController {
                                  @PathVariable("itemId") Long itemId,
                                  @RequestBody @Valid CommentDto commentDto) {
 
-        log.info("Got request from user with id {} to add comment to item with id {}, comment text: \n{}",
-                userId, itemId, commentDto.getText());
+        AddCommentRequestParams requestParams = new AddCommentRequestParams(userId, itemId, commentDto);
+        log.info("Got request to add comment to item with: {}", requestParams);
         return itemService.addComment(userId, itemId, commentDto);
     }
 
@@ -48,27 +51,41 @@ public class ItemController {
                           @PathVariable("id") Long itemId,
                           @RequestBody @Valid ItemDto itemDto) {
 
-        log.info("Got request to edit item {} from user with id {}", itemDto, userId);
+        UpdateRequestParams requestParams = new UpdateRequestParams(userId, itemId, itemDto);
+        log.info("Got request to edit item with: {}", requestParams);
         return itemService.update(userId, itemId, itemDto);
     }
 
     @GetMapping("/{id}")
     public ItemWithBookingsAndCommentsDto getById(@RequestHeader("X-Sharer-User-Id") Long userId,
                                                   @PathVariable("id") Long itemId) {
-        log.info("Got request from user with id {} to get item with id {}", userId, itemId);
+
+        GetByIdRequestParams requestParams = new GetByIdRequestParams(userId, itemId);
+        log.info("Got request to get item with: {}", requestParams);
         return itemService.getById(userId, itemId);
     }
 
     @GetMapping
-    public List<ItemWithBookingsAndCommentsDto> getUsersItems(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemWithBookingsAndCommentsDto> getUsersItems(
+            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestParam(name = "from", defaultValue = "0") @Min(0) int from,
+            @RequestParam(name = "size", defaultValue = "20") @Min(1) int size
+    ) {
+
+        GetByUserRequestParams requestParams = new GetByUserRequestParams(userId, from, size);
         log.info("Got request to get all items by user with id {}", userId);
-        return itemService.getUserItems(userId);
+        return itemService.getUserItems(userId, from, size);
     }
 
     @GetMapping("/search")
     public List<ItemDto> searchItems(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                     @RequestParam("text") String text) {
+                                     @RequestParam("text") String text,
+                                     @RequestParam(name = "from", defaultValue = "0") @Min(0) int from,
+                                     @RequestParam(name = "size", defaultValue = "20") @Min(1) int size
+    ) {
+
+        SearchRequestParams requestParams = new SearchRequestParams(userId, text, from, size);
         log.info("Got request to find available items by text:\n\"{}\"", text);
-        return itemService.searchItems(userId, text);
+        return itemService.searchItems(userId, text, from, size);
     }
 }

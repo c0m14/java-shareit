@@ -2,7 +2,6 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import ru.practicum.shareit.request.ItemRequest;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -19,5 +18,5 @@ public class ItemCreateDto {
     private String description;
     @NotNull
     private Boolean available;
-    private ItemRequest itemRequest;
+    private Long requestId;
 }

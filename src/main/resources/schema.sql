@@ -8,7 +8,11 @@ create table if not exists users (
 
 create table if not exists request (
     request_id bigint generated always as identity not null,
-    constraint pk_request primary key (request_id)
+    description varchar not null,
+    owner_id bigint not null,
+    created timestamp without time zone not null,
+    constraint pk_request primary key (request_id),
+    constraint fk_request_to_users foreign key (owner_id) references users (user_id)
 );
 
 create table if not exists item (

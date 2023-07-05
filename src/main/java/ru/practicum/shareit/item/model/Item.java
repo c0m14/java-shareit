@@ -1,12 +1,11 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.*;
-import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * TODO Sprint add-controllers.
@@ -41,9 +40,9 @@ public class Item {
     private Boolean available;
 
     @ToString.Exclude
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "request_id")
-    private Set<ItemRequest> itemRequests;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "request_id", referencedColumnName = "request_id")
+    private Request request;
 
     @Override
     public boolean equals(Object o) {
