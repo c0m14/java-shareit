@@ -85,7 +85,7 @@ public class ItemController {
     ) {
 
         SearchRequestParams requestParams = new SearchRequestParams(userId, text, from, size);
-        log.info("Got request to find available items by text:\n\"{}\"", text);
+        log.info("Got request to find available items with: {}", requestParams);
         return itemService.searchItems(userId, text, from, size);
     }
 }

@@ -55,7 +55,7 @@ public class ItemServiceImpl implements ItemService {
         boolean hasRequest = itemCreateDto.getRequestId() != null;
 
         if (hasRequest) {
-            Request itemRequest = requestRepository.findById(itemCreateDto.getRequestId()).get();
+            Request itemRequest = getRequestById(itemCreateDto.getRequestId());
             itemToSave = itemMapper.mapToItem(itemCreateDto, owner, itemRequest);
         } else {
             itemToSave = itemMapper.mapToItem(itemCreateDto, owner);
@@ -144,6 +144,7 @@ public class ItemServiceImpl implements ItemService {
 
     private List<CommentDto> getCommentsDtoForItem(Long itemId) {
         return commentRepository.findByItemIdOrderByCreatedDesc(itemId).stream()
+                .filter(Objects::nonNull)
                 .map(commentMapper::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -225,6 +226,19 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getAvailable() != null) {
             updatedItem.setAvailable(itemDto.getAvailable());
         }
+        if (itemDto.getRequestId() != null) {
+            Request newRequest = getRequestById(itemDto.getRequestId());
+            updatedItem.setRequest(newRequest);
+        }
+    }
+
+    private Request getRequestById(Long requestId) {
+        return requestRepository.findById(requestId).orElseThrow(
+                () -> new NotExistsException(
+                        "Request",
+                        String.format("Request with id %d not exist", requestId)
+                )
+        );
     }
 
 }
