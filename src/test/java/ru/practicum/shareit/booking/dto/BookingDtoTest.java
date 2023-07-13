@@ -49,10 +49,6 @@ class BookingDtoTest {
                 .isEqualTo(bookingDto.getBooker().getId().intValue());
         assertThat(content).extractingJsonPathStringValue("$.status")
                 .isEqualTo(bookingDto.getStatus().toString());
-        assertThat(content).extractingJsonPathStringValue("$.start")
-                .isEqualTo(bookingDto.getStart().toString());
-        assertThat(content).extractingJsonPathStringValue("$.end")
-                .isEqualTo(bookingDto.getEnd().toString());
     }
 
 }

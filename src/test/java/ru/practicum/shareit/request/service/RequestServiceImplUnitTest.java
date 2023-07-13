@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class RequestServiceImplUnitTests {
+class RequestServiceImplUnitTest {
 
     @Mock
     private UserRepository userRepository;

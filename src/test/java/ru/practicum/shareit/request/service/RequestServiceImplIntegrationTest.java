@@ -23,7 +23,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 
 @SpringBootTest
-class RequestServiceImplIntegrationTests {
+class RequestServiceImplIntegrationTest {
     @Autowired
     private RequestService requestService;
     @Autowired

@@ -28,7 +28,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 @SpringBootTest
-class ItemServiceImplIntegrationTests {
+class ItemServiceImplIntegrationTest {
 
     @Autowired
     private ItemService itemService;

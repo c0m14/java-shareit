@@ -25,7 +25,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-class BookingServiceImplIntegrationTests {
+class BookingServiceImplIntegrationTest {
 
     @Autowired
     private BookingService bookingService;

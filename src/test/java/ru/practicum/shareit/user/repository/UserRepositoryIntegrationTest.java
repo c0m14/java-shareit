@@ -13,7 +13,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
-class UserRepositoryIntegrationTests {
+class UserRepositoryIntegrationTest {
 
     @Autowired
     private UserRepository userRepository;

@@ -15,7 +15,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-class UserServiceImplIntegrationTests {
+class UserServiceImplIntegrationTest {
     @Autowired
     private UserServiceImpl userService;
     @Autowired
