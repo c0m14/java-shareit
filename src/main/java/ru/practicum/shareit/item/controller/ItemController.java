@@ -73,7 +73,7 @@ public class ItemController {
     ) {
 
         GetByUserRequestParams requestParams = new GetByUserRequestParams(userId, from, size);
-        log.info("Got request to get all items by user with id {}", userId);
+        log.info("Got request to get all items by user with {}", requestParams);
         return itemService.getUserItems(userId, from, size);
     }
 
