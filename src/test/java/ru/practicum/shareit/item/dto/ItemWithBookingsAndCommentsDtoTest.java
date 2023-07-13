@@ -9,7 +9,6 @@ import org.springframework.boot.test.json.JsonContent;
 import ru.practicum.shareit.booking.dto.LastNextBookingDto;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
