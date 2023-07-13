@@ -96,8 +96,8 @@ class ItemRepositoryTest {
                 .available(true)
                 .owner(owner)
                 .build());
-        Item item_3 = itemRepository.save(Item.builder()
-                .name("item_3")
+        Item item3 = itemRepository.save(Item.builder()
+                .name("item3")
                 .description("desc")
                 .available(true)
                 .owner(owner)
@@ -110,7 +110,7 @@ class ItemRepositoryTest {
         assertThat(items.getTotalElements(), equalTo(2L));
         assertEquals(item1, itemsList.get(0));
         assertEquals(item2, itemsList.get(1));
-        assertFalse(itemsList.contains(item_3));
+        assertFalse(itemsList.contains(item3));
     }
 
     @Test
