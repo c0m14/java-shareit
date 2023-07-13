@@ -11,7 +11,7 @@ public interface RequestService {
 
     List<RequestDto> getAllUserItemRequests(Long ownerId);
 
-    List<RequestDto> getAll(Long userId, int from, int size);
+    List<RequestDto> getAllOtherUsersRequests(Long userId, int from, int size);
 
     RequestDto getById(Long userId, Long requestId);
 }

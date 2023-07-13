@@ -44,14 +44,14 @@ public class RequestController {
     }
 
     @GetMapping("/all")
-    public List<RequestDto> getAll(@RequestHeader("X-Sharer-User-Id") Long ownerId,
-                                   @RequestParam(value = "from", defaultValue = "0") @Min(0) int from,
-                                   @RequestParam(value = "size", defaultValue = "20") @Min(1) int size
+    public List<RequestDto> getAllOtherUsersRequests(@RequestHeader("X-Sharer-User-Id") Long ownerId,
+                                                     @RequestParam(value = "from", defaultValue = "0") @Min(0) int from,
+                                                     @RequestParam(value = "size", defaultValue = "20") @Min(1) int size
     ) {
 
         GetAllRequestParams requestParams = new GetAllRequestParams(ownerId, from, size);
         log.info("Got request to get all item requests with: {}", requestParams);
-        return requestService.getAll(ownerId, from, size);
+        return requestService.getAllOtherUsersRequests(ownerId, from, size);
     }
 
     @GetMapping("/{id}")

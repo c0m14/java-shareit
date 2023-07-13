@@ -13,8 +13,6 @@ import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-    List<Booking> findByBookerId(Long bookerId, Sort sort);
-
     Page<Booking> findByBookerId(Pageable page, Long bookerId);
 
     Page<Booking> findByBookerIdAndEndIsAfterAndStartIsBefore(

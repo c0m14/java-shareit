@@ -54,12 +54,12 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     @Transactional
-    public List<RequestDto> getAll(Long userId, int from, int size) {
+    public List<RequestDto> getAllOtherUsersRequests(Long userId, int from, int size) {
         PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size, sortByCreatedDesc);
 
         return requestMapper.mapStreamToDto(
                 requestRepository.findAll(pageRequest).stream()
-                        .filter(request -> !Objects.equals(userId, request.getRequestId())),
+                        .filter(request -> !Objects.equals(userId, request.getOwner().getId())),
                 itemRepository);
     }
 
@@ -69,7 +69,7 @@ public class RequestServiceImpl implements RequestService {
         Request request = requestRepository.findById(requestId).orElseThrow(
                 () -> new NotExistsException(
                         "Request",
-                        String.format("Request with id $d does not exist", requestId))
+                        String.format("Request with id %d does not exist", requestId))
         );
         List<ItemDto> itemsDto = itemRepository.findAllByRequest_RequestId(requestId).stream()
                 .map(item -> itemMapper.mapToDto(item, requestId))

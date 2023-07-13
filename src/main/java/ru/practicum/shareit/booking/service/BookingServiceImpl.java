@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingCreationDto;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class BookingServiceImpl implements BookingService {
 
@@ -255,7 +255,7 @@ public class BookingServiceImpl implements BookingService {
 
     private BookingStateSearchDto getBookingState(String stringState) {
         try {
-            return BookingStateSearchDto.valueOf(stringState);
+            return BookingStateSearchDto.valueOf(stringState.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new InvalidParamException(
                     "State",

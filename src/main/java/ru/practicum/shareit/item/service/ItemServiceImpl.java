@@ -78,7 +78,12 @@ public class ItemServiceImpl implements ItemService {
 
         updateFields(updatedItem, itemDto);
 
-        return itemMapper.mapToDto(itemRepository.save(updatedItem));
+        Item savedItem = itemRepository.save(updatedItem);
+        if (savedItem.getRequest() != null) {
+            return itemMapper.mapToDto(savedItem, savedItem.getRequest().getRequestId());
+        } else {
+            return itemMapper.mapToDto(savedItem);
+        }
     }
 
     @Override
@@ -229,6 +234,8 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getRequestId() != null) {
             Request newRequest = getRequestById(itemDto.getRequestId());
             updatedItem.setRequest(newRequest);
+        } else {
+            updatedItem.setRequest(null);
         }
     }
 
