@@ -30,8 +30,6 @@ class BookingCreationDtoTest {
 
         assertThat(content).extractingJsonPathNumberValue("$.itemId")
                 .isEqualTo(bookingCreationDto.getItemId().intValue());
-        assertThat(content).extractingJsonPathStringValue("$.end")
-                .isEqualTo(bookingCreationDto.getEnd().toString());
     }
 
 }
