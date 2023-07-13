@@ -60,23 +60,23 @@ class RequestServiceImplIntegrationTests {
     @Test
     void getAllUserItemRequests_whenInvoked_thenUserRequestsDtoReturnedWithItemsSortedByCreationDesc() {
         User user = saveRandomUser();
-        Request request_1 = requestRepository.save(Request.builder()
-                .description("request_1")
+        Request request1 = requestRepository.save(Request.builder()
+                .description("request1")
                 .owner(user)
                 .created(LocalDateTime.now().minusHours(2))
                 .build());
-        Request request_2 = requestRepository.save(Request.builder()
-                .description("request_2")
+        Request request2 = requestRepository.save(Request.builder()
+                .description("request2")
                 .owner(user)
                 .created(LocalDateTime.now().minusHours(1))
                 .build());
-        saveRandomItemWithRequest(request_1);
-        saveRandomItemWithRequest(request_1);
+        saveRandomItemWithRequest(request1);
+        saveRandomItemWithRequest(request1);
 
         List<RequestDto> foundRequests = requestService.getAllUserItemRequests(user.getId());
 
-        assertThat(foundRequests.get(0).getId(), equalTo(request_2.getRequestId()));
-        assertThat(foundRequests.get(1).getId(), equalTo(request_1.getRequestId()));
+        assertThat(foundRequests.get(0).getId(), equalTo(request2.getRequestId()));
+        assertThat(foundRequests.get(1).getId(), equalTo(request1.getRequestId()));
         assertThat(foundRequests.get(1).getItems(), hasSize(2));
     }
 
@@ -92,19 +92,19 @@ class RequestServiceImplIntegrationTests {
                 .owner(requestedUser)
                 .created(LocalDateTime.now().minusHours(2))
                 .build());
-        Request request_2 = requestRepository.save(Request.builder()
-                .description("request_2")
+        Request request2 = requestRepository.save(Request.builder()
+                .description("request2")
                 .owner(otherUser)
                 .created(LocalDateTime.now().minusHours(1))
                 .build());
-        saveRandomItemWithRequest(request_2);
-        saveRandomItemWithRequest(request_2);
+        saveRandomItemWithRequest(request2);
+        saveRandomItemWithRequest(request2);
 
         List<RequestDto> foundRequests =
                 requestService.getAllOtherUsersRequests(requestedUser.getId(), 0, 5);
 
         assertThat(foundRequests, hasSize(1));
-        assertThat(foundRequests.get(0).getId(), equalTo(request_2.getRequestId()));
+        assertThat(foundRequests.get(0).getId(), equalTo(request2.getRequestId()));
         assertThat(foundRequests.get(0).getItems(), hasSize(2));
     }
 

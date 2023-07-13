@@ -66,32 +66,32 @@ class UserServiceImplIntegrationTests {
     @Test
     void getAll_whenUsersFound_thenListWithValidUsersDtoReturned() {
         userRepository.deleteAll();
-        User user_1 = User.builder()
-                .name("user_1")
-                .email("user_1@email.ru")
+        User user1 = User.builder()
+                .name("user1")
+                .email("user1@email.ru")
                 .build();
-        userRepository.save(user_1);
-        User user_2 = User.builder()
-                .name("user_2")
-                .email("user_2@email.ru")
+        userRepository.save(user1);
+        User user2 = User.builder()
+                .name("user2")
+                .email("user2@email.ru")
                 .build();
-        userRepository.save(user_2);
+        userRepository.save(user2);
         List<UserDto> foundUsers = userService.getAll();
 
         assertThat(foundUsers, hasSize(2));
-        assertThat(foundUsers.get(0).getName(), equalTo(user_1.getName()));
-        assertThat(foundUsers.get(0).getEmail(), equalTo(user_1.getEmail()));
-        assertThat(foundUsers.get(1).getName(), equalTo(user_2.getName()));
-        assertThat(foundUsers.get(1).getEmail(), equalTo(user_2.getEmail()));
+        assertThat(foundUsers.get(0).getName(), equalTo(user1.getName()));
+        assertThat(foundUsers.get(0).getEmail(), equalTo(user1.getEmail()));
+        assertThat(foundUsers.get(1).getName(), equalTo(user2.getName()));
+        assertThat(foundUsers.get(1).getEmail(), equalTo(user2.getEmail()));
     }
 
     @Test
     void delete_whenInvoked_thenUserDeleteFromDB() {
-        User user_1 = User.builder()
-                .name("user_1")
-                .email("user_1@email.ru")
+        User user1 = User.builder()
+                .name("user1")
+                .email("user1@email.ru")
                 .build();
-        Long savedUserId = userRepository.save(user_1).getId();
+        Long savedUserId = userRepository.save(user1).getId();
 
         userService.delete(savedUserId);
 

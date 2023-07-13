@@ -291,20 +291,20 @@ class ItemServiceImplIntegrationTests {
     @Test
     void getUserItems_whenInvoked_thenItemsDtoListWithBookingsReturned() {
         User owner = saveRandomUser();
-        Item requestedItem_1 = itemRepository.save(Item.builder()
+        Item requestedItem1 = itemRepository.save(Item.builder()
                 .name("name")
                 .description("desc")
                 .owner(owner)
                 .available(true)
                 .build());
-        Item requestedItem_2 = itemRepository.save(Item.builder()
+        Item requestedItem2 = itemRepository.save(Item.builder()
                 .name("name")
                 .description("desc")
                 .owner(owner)
                 .available(true)
                 .build());
         Booking lastBooking = Booking.builder()
-                .item(requestedItem_1)
+                .item(requestedItem1)
                 .booker(saveRandomUser())
                 .state(BookingState.APPROVED)
                 .start(LocalDateTime.now().minusHours(2))
@@ -312,7 +312,7 @@ class ItemServiceImplIntegrationTests {
                 .build();
         Long lastBookingId = bookingRepository.save(lastBooking).getId();
         Booking nextBooking = Booking.builder()
-                .item(requestedItem_2)
+                .item(requestedItem2)
                 .booker(saveRandomUser())
                 .state(BookingState.APPROVED)
                 .start(LocalDateTime.now().plusHours(1))
@@ -331,7 +331,7 @@ class ItemServiceImplIntegrationTests {
     @Transactional
     void getUserItems_whenItemHasComments_thenDtoListWithCommentsReturned() {
         User owner = saveRandomUser();
-        Item requestedItem_1 = itemRepository.save(Item.builder()
+        Item requestedItem1 = itemRepository.save(Item.builder()
                 .name("name")
                 .description("desc")
                 .owner(owner)
@@ -344,7 +344,7 @@ class ItemServiceImplIntegrationTests {
                 .available(true)
                 .build());
         Comment comment = commentRepository.save(Comment.builder()
-                .item(requestedItem_1)
+                .item(requestedItem1)
                 .created(LocalDateTime.now())
                 .author(saveRandomUser())
                 .text("text")

@@ -53,7 +53,7 @@ class BookingRepositoryTest {
                 .start(LocalDateTime.now().minusHours(1))
                 .end(LocalDateTime.now().plusHours(1))
                 .build());
-        Booking booking_2 = bookingRepository.save(Booking.builder()
+        Booking booking2 = bookingRepository.save(Booking.builder()
                 .booker(booker)
                 .item(item)
                 .state(BookingState.WAITING)
@@ -65,7 +65,7 @@ class BookingRepositoryTest {
 
         assertThat(bookings.getTotalPages(), equalTo(2));
         assertThat(bookings.getTotalElements(), equalTo(2L));
-        assertEquals(booking_2, bookings.getContent().get(0));
+        assertEquals(booking2, bookings.getContent().get(0));
     }
 
     @Test
@@ -170,7 +170,7 @@ class BookingRepositoryTest {
                 .start(LocalDateTime.now().minusHours(1))
                 .end(LocalDateTime.now().plusHours(1))
                 .build());
-        Booking booking_2 = bookingRepository.save(Booking.builder()
+        Booking booking2 = bookingRepository.save(Booking.builder()
                 .booker(saveRandomUser())
                 .item(item)
                 .state(BookingState.WAITING)
@@ -182,7 +182,7 @@ class BookingRepositoryTest {
 
         assertThat(bookings.getTotalPages(), equalTo(2));
         assertThat(bookings.getTotalElements(), equalTo(2L));
-        assertEquals(booking_2, bookings.getContent().get(0));
+        assertEquals(booking2, bookings.getContent().get(0));
     }
 
     @Test

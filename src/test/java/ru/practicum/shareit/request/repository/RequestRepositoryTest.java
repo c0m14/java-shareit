@@ -30,22 +30,22 @@ class RequestRepositoryTest {
     void testFindAllByOwnerId() {
         User owner = saveRandomUser();
         Sort sort = Sort.by(Sort.Direction.DESC, "created");
-        Request request_1 = requestRepository.save(Request.builder()
+        Request request1 = requestRepository.save(Request.builder()
                 .created(LocalDateTime.now().minusHours(2))
-                .description("request_1 desc")
+                .description("request1 desc")
                 .owner(owner)
                 .build());
-        Request request_2 = requestRepository.save(Request.builder()
+        Request request2 = requestRepository.save(Request.builder()
                 .created(LocalDateTime.now().minusHours(1))
-                .description("request_2 desc")
+                .description("request2 desc")
                 .owner(owner)
                 .build());
 
         List<Request> requests = requestRepository.findAllByOwnerId(owner.getId(), sort);
 
         assertThat(requests, hasSize(2));
-        assertThat(requests.get(0), equalTo(request_2));
-        assertThat(requests.get(1), equalTo(request_1));
+        assertThat(requests.get(0), equalTo(request2));
+        assertThat(requests.get(1), equalTo(request1));
     }
 
     @Test
@@ -56,19 +56,19 @@ class RequestRepositoryTest {
         int size = 1;
         Sort sort = Sort.by(Sort.Direction.DESC, "created");
         PageRequest pageRequest = PageRequest.of(page, size, sort);
-        Request request_1 = requestRepository.save(Request.builder()
+        Request request1 = requestRepository.save(Request.builder()
                 .created(LocalDateTime.now().minusHours(3))
-                .description("request_1 desc")
+                .description("request1 desc")
                 .owner(owner)
                 .build());
-        Request request_2 = requestRepository.save(Request.builder()
+        Request request2 = requestRepository.save(Request.builder()
                 .created(LocalDateTime.now().minusHours(2))
-                .description("request_2 desc")
+                .description("request2 desc")
                 .owner(owner)
                 .build());
-        Request request_3 = requestRepository.save(Request.builder()
+        Request request3 = requestRepository.save(Request.builder()
                 .created(LocalDateTime.now().minusHours(1))
-                .description("request_1 desc")
+                .description("request3 desc")
                 .owner(owner)
                 .build());
 
@@ -76,7 +76,7 @@ class RequestRepositoryTest {
 
         assertThat(result.getTotalElements(), equalTo(3L));
         assertThat(result.getTotalPages(), equalTo(3));
-        assertThat(result.getContent().get(0), equalTo(request_1));
+        assertThat(result.getContent().get(0), equalTo(request1));
     }
 
     private User saveRandomUser() {

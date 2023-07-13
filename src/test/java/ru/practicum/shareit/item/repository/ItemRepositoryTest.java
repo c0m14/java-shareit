@@ -42,8 +42,8 @@ class ItemRepositoryTest {
                 .available(true)
                 .owner(owner)
                 .build());
-        Item item_2 = itemRepository.save(Item.builder()
-                .name("item_2")
+        Item item2 = itemRepository.save(Item.builder()
+                .name("item2")
                 .description("desc")
                 .available(true)
                 .owner(owner)
@@ -53,20 +53,20 @@ class ItemRepositoryTest {
 
         assertThat(items.getTotalPages(), equalTo(2));
         assertThat(items.getTotalElements(), equalTo(2L));
-        assertEquals(item_2, items.getContent().get(0));
+        assertEquals(item2, items.getContent().get(0));
     }
 
     @Test
     void findByOwnerId_whenInvokedWithoutPaging_thenItemsListReturned() {
         User owner = saveRandomUser();
-        Item item_1 = itemRepository.save(Item.builder()
-                .name("item_1")
+        Item item1 = itemRepository.save(Item.builder()
+                .name("item1")
                 .description("desc")
                 .available(true)
                 .owner(owner)
                 .build());
-        Item item_2 = itemRepository.save(Item.builder()
-                .name("item_2")
+        Item item2 = itemRepository.save(Item.builder()
+                .name("item2")
                 .description("desc")
                 .available(true)
                 .owner(owner)
@@ -75,8 +75,8 @@ class ItemRepositoryTest {
         List<Item> items = itemRepository.findByOwnerId(owner.getId());
 
         assertThat(items, hasSize(2));
-        assertThat(items.get(0), equalTo(item_1));
-        assertThat(items.get(1), equalTo(item_2));
+        assertThat(items.get(0), equalTo(item1));
+        assertThat(items.get(1), equalTo(item2));
     }
 
     @Test
@@ -84,14 +84,14 @@ class ItemRepositoryTest {
         User owner = saveRandomUser();
         PageRequest pageRequest = PageRequest.of(0, 3);
         String text = "ITEM_1";
-        Item item_1 = itemRepository.save(Item.builder()
-                .name("item_1")
+        Item item1 = itemRepository.save(Item.builder()
+                .name("item1")
                 .description("desc")
                 .available(true)
                 .owner(owner)
                 .build());
-        Item item_2 = itemRepository.save(Item.builder()
-                .name("item_2")
+        Item item2 = itemRepository.save(Item.builder()
+                .name("item2")
                 .description("addition to Item_1")
                 .available(true)
                 .owner(owner)
@@ -108,8 +108,8 @@ class ItemRepositoryTest {
         List<Item> itemsList = items.getContent();
         assertThat(items.getTotalPages(), equalTo(1));
         assertThat(items.getTotalElements(), equalTo(2L));
-        assertEquals(item_1, itemsList.get(0));
-        assertEquals(item_2, itemsList.get(1));
+        assertEquals(item1, itemsList.get(0));
+        assertEquals(item2, itemsList.get(1));
         assertFalse(itemsList.contains(item_3));
     }
 
@@ -117,22 +117,22 @@ class ItemRepositoryTest {
     void findAllByRequest_RequestId_whenInvoked_thenItemsWithRequestFound() {
         User owner = saveRandomUser();
         Request request = saveRandomRequest();
-        Item item_1 = itemRepository.save(Item.builder()
-                .name("item_1")
+        Item item1 = itemRepository.save(Item.builder()
+                .name("item1")
                 .description("desc")
                 .available(true)
                 .owner(owner)
                 .request(request)
                 .build());
-        Item item_2 = itemRepository.save(Item.builder()
-                .name("item_2")
+        Item item2 = itemRepository.save(Item.builder()
+                .name("item2")
                 .description("addition to Item_1")
                 .available(true)
                 .owner(owner)
                 .request(request)
                 .build());
-        Item item_3 = itemRepository.save(Item.builder()
-                .name("item_3")
+        Item item3 = itemRepository.save(Item.builder()
+                .name("item3")
                 .description("desc")
                 .available(true)
                 .owner(owner)
@@ -141,9 +141,9 @@ class ItemRepositoryTest {
         List<Item> foundItems = itemRepository.findAllByRequest_RequestId(request.getRequestId());
 
         assertThat(foundItems, hasSize(2));
-        assertThat(foundItems.get(0), equalTo(item_1));
-        assertThat(foundItems.get(1), equalTo(item_2));
-        assertThat(foundItems, not(containsInAnyOrder(item_3)));
+        assertThat(foundItems.get(0), equalTo(item1));
+        assertThat(foundItems.get(1), equalTo(item2));
+        assertThat(foundItems, not(containsInAnyOrder(item3)));
     }
 
     private User saveRandomUser() {
