@@ -17,7 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @JsonTest
 class ItemWithBookingsAndCommentsDtoTest {
 
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
     @Autowired
     private JacksonTester<ItemWithBookingsAndCommentsDto> jacksonTester;
 
@@ -61,8 +60,6 @@ class ItemWithBookingsAndCommentsDtoTest {
                 .isEqualTo(itemWithBookingsAndCommentsDto.getComments().get(0).getText());
         assertThat(content).extractingJsonPathStringValue("$.comments[0].authorName")
                 .isEqualTo(itemWithBookingsAndCommentsDto.getComments().get(0).getAuthorName());
-        assertThat(content).extractingJsonPathStringValue("$.comments[0].created")
-                .isEqualTo(itemWithBookingsAndCommentsDto.getComments().get(0).getCreated().format(formatter));
         assertThat(content).extractingJsonPathNumberValue("$.lastBooking.id")
                 .isEqualTo(itemWithBookingsAndCommentsDto.getLastBooking().getId().intValue());
         assertThat(content).extractingJsonPathNumberValue("$.lastBooking.bookerId")

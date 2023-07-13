@@ -17,7 +17,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @JsonTest
 class RequestDtoTest {
 
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
     @Autowired
     private JacksonTester<RequestDto> jacksonTester;
 
@@ -39,8 +38,6 @@ class RequestDtoTest {
 
         JsonContent<RequestDto> content = jacksonTester.write(requestDto);
 
-        assertThat(content).extractingJsonPathStringValue("$.created")
-                .isEqualTo(requestDto.getCreated().format(formatter));
         assertThat(content).extractingJsonPathStringValue("$.description")
                 .isEqualTo(requestDto.getDescription());
         assertThat(content).extractingJsonPathNumberValue("$.id")

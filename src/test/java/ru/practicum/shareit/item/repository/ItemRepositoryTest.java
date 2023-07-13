@@ -85,7 +85,7 @@ class ItemRepositoryTest {
         PageRequest pageRequest = PageRequest.of(0, 3);
         String text = "ITEM_1";
         Item item1 = itemRepository.save(Item.builder()
-                .name("item1")
+                .name("item_1")
                 .description("desc")
                 .available(true)
                 .owner(owner)
