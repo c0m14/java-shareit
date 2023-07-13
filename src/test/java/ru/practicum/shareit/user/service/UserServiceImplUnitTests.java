@@ -25,17 +25,17 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class UserServiceImplUnitTest {
+class UserServiceImplUnitTests {
 
-    @Mock
-    UserRepository userRepository;
-    @InjectMocks
-    UserServiceImpl userService;
-    @Mock
-    private UserMapper userMapper;
     private static User mockUser;
     private static UserCreateDto mockUserCreateDto;
     private static UserDto mockUserDto;
+    @Mock
+    private UserRepository userRepository;
+    @InjectMocks
+    private UserServiceImpl userService;
+    @Mock
+    private UserMapper userMapper;
     @Captor
     private ArgumentCaptor<User> userArgumentCaptor;
 

@@ -20,12 +20,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = UserController.class)
-class UserControllerIntegrationTest {
+class UserControllerIntegrationTests {
     @Autowired
-    ObjectMapper mapper;
+    private ObjectMapper mapper;
 
     @MockBean
-    UserService userService;
+    private UserService userService;
 
     @Autowired
     private MockMvc mvc;
@@ -45,11 +45,11 @@ class UserControllerIntegrationTest {
                 .build();
 
         mvc.perform(post("/users")
-                .content(mapper.writeValueAsString(userCreateDto))
+                        .content(mapper.writeValueAsString(userCreateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        verify(userService, times(1)).add(userCreateDto);
-        verify(userService).add(userCreateDtoArgumentCaptor.capture());
+        verify(userService, times(1))
+                .add(userCreateDtoArgumentCaptor.capture());
         assertEquals(userCreateDto, userCreateDtoArgumentCaptor.getValue(),
                 "Invalid user passed to User Service when add");
     }
@@ -140,6 +140,36 @@ class UserControllerIntegrationTest {
         verify(userService).update(anyLong(), userDtoArgumentCaptor.capture());
         assertEquals(userDto, userDtoArgumentCaptor.getValue(),
                 "Invalid user passed to User Service when update");
+    }
+
+    @SneakyThrows
+    @Test
+    void update_whenOnlyName_thenStatusIsOk() {
+        Long userId = 0L;
+        UserDto userDto = UserDto.builder()
+                .id(userId)
+                .name("name")
+                .build();
+
+        mvc.perform(patch("/users/{id}", userId)
+                        .content(mapper.writeValueAsString(userDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @SneakyThrows
+    @Test
+    void update_whenOnlyEmail_thenStatusIsOk() {
+        Long userId = 0L;
+        UserDto userDto = UserDto.builder()
+                .id(userId)
+                .email("email@email.ru")
+                .build();
+
+        mvc.perform(patch("/users/{id}", userId)
+                        .content(mapper.writeValueAsString(userDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
     @SneakyThrows

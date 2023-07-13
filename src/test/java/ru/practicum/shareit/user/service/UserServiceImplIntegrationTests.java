@@ -1,207 +1,102 @@
 package ru.practicum.shareit.user.service;
 
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import ru.practicum.shareit.user.dto.UserCreateDto;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-class UserServiceImplIntegrationTest {
+class UserServiceImplIntegrationTests {
     @Autowired
     private UserServiceImpl userService;
-    @MockBean
+    @Autowired
     private UserRepository userRepository;
-    @Captor
-    ArgumentCaptor<User> userArgumentCaptor;
-
 
     @Test
-    void add_whenInvoked_thenMappedFromCreateDtoToEntityAndPassedToRepository() {
+    void add_whenInvoked_thenSavedProperlyInDB() {
         UserCreateDto userCreateDto = UserCreateDto.builder()
                 .name("name")
                 .email("email")
                 .build();
-        User expectedUser = User.builder()
-                .name("name")
-                .email("email")
-                .build();
-        when(userRepository.save(Mockito.any(User.class)))
-                .thenReturn(getValidUser());
 
-        userService.add(userCreateDto);
-        verify(userRepository).save(userArgumentCaptor.capture());
+        Long savedUserId = userService.add(userCreateDto).getId();
 
-        assertEquals(expectedUser, userArgumentCaptor.getValue(),
-                "Invalid mapping Create Dto -> User when add"
-        );
+        User savedUser = userRepository.findById(savedUserId).get();
+        assertThat(savedUser.getId(), notNullValue());
+        assertThat(savedUser.getName(), equalTo(userCreateDto.getName()));
+        assertThat(savedUser.getEmail(), equalTo(userCreateDto.getEmail()));
     }
 
     @Test
-    void add_whenSaved_thenMappedFromEntityToUserDto() {
-        User savedUser = User.builder()
-                .id(0L)
-                .name("name")
-                .email("email")
-                .build();
-        UserDto expectedUserDto = UserDto.builder()
-                .id(0L)
-                .name("name")
-                .email("email")
-                .build();
-        when(userRepository.save(Mockito.any(User.class)))
-                .thenReturn(savedUser);
-
-        UserDto returnedDto = userService.add(getValidCreateDto());
-
-        assertEquals(expectedUserDto, returnedDto,
-                "Invalid mapping User -> UserDto when add");
-    }
-
-    @Test
-    void update_whenInvoked_thenMappedToEntityAndPassedToRepo() {
-        Long updatedUserId = 0L;
-        User updatedUser = User.builder()
-                .id(updatedUserId)
+    void update_whenInvoked_thenUpdatedProperlyInDB() {
+        Long savedUserId = userRepository.save(User.builder()
                 .name("oldName")
-                .email("oldEmail@email.ru")
+                .email("oldEmail")
+                .build()).getId();
+        UserDto updateUserDto = UserDto.builder()
+                .id(savedUserId)
+                .name("newName")
+                .email("newEmail")
                 .build();
-        UserDto updatedUserDto = UserDto.builder()
-                .name("name")
-                .email("email@email.ru")
-                .build();
-        User expectedUser = User.builder()
-                .id(updatedUserId)
-                .name("name")
-                .email("email@email.ru")
-                .build();
-        when(userRepository.findById(updatedUserId))
-                .thenReturn(Optional.of(getValidUser()));
-        when(userRepository.save(Mockito.any(User.class)))
-                .thenReturn(getValidUser());
 
-        userService.update(updatedUserId, updatedUserDto);
-        verify(userRepository).save(userArgumentCaptor.capture());
+        userService.update(savedUserId, updateUserDto);
 
-        assertEquals(expectedUser, userArgumentCaptor.getValue(),
-                "Invalid mapping User Dto -> User when update"
-        );
-
+        User updatedUser = userRepository.findById(savedUserId).get();
+        assertThat(updatedUser.getName(), equalTo(updateUserDto.getName()));
+        assertThat(updatedUser.getEmail(), equalTo(updateUserDto.getEmail()));
     }
 
     @Test
-    void update_whenSaved_thenMappedToUserDto() {
-        Long updatedUserId = 0L;
-        User updatedUser = User.builder()
-                .id(updatedUserId)
-                .name("oldName")
-                .email("oldEmail@email.ru")
-                .build();
-        UserDto updatedUserDto = UserDto.builder()
-                .name("name")
-                .email("email@email.ru")
-                .build();
-        User expectedUser = User.builder()
-                .id(updatedUserId)
-                .name("name")
-                .email("email@email.ru")
-                .build();
-        when(userRepository.findById(updatedUserId))
-                .thenReturn(Optional.of(updatedUser));
-        when(userRepository.save(Mockito.any(User.class)))
-                .thenReturn(getValidUser());
+    void getAll_whenNoUsers_thenEmptyListReturned() {
+        userRepository.deleteAll();
+        List<UserDto> foundUsers = userService.getAll();
 
-        userService.update(updatedUserId, updatedUserDto);
-        verify(userRepository).save(userArgumentCaptor.capture());
-
-        assertEquals(expectedUser, userArgumentCaptor.getValue(),
-                "Invalid mapping User -> User Dto when update"
-        );
+        assertThat(foundUsers, empty());
     }
 
     @Test
-    void getById() {
-        Long userId = 0L;
-        User foundUser = User.builder()
-                .id(userId)
-                .name("name")
-                .email("email@email.ru")
+    void getAll_whenUsersFound_thenListWithValidUsersDtoReturned() {
+        userRepository.deleteAll();
+        User user_1 = User.builder()
+                .name("user_1")
+                .email("user_1@email.ru")
                 .build();
-        UserDto expectedUserDto = UserDto.builder()
-                .id(userId)
-                .name("name")
-                .email("email@email.ru")
+        userRepository.save(user_1);
+        User user_2 = User.builder()
+                .name("user_2")
+                .email("user_2@email.ru")
                 .build();
-        when(userRepository.findById(userId))
-                .thenReturn(Optional.ofNullable(foundUser));
+        userRepository.save(user_2);
+        List<UserDto> foundUsers = userService.getAll();
 
-        UserDto actualUserDto = userService.getById(userId);
-
-        assertEquals(expectedUserDto, actualUserDto,
-                "Invalid mapping User -> User Dto when getById"
-        );
+        assertThat(foundUsers, hasSize(2));
+        assertThat(foundUsers.get(0).getName(), equalTo(user_1.getName()));
+        assertThat(foundUsers.get(0).getEmail(), equalTo(user_1.getEmail()));
+        assertThat(foundUsers.get(1).getName(), equalTo(user_2.getName()));
+        assertThat(foundUsers.get(1).getEmail(), equalTo(user_2.getEmail()));
     }
 
     @Test
-    void getAll() {
-        List<User> foundUsers = List.of(
-                User.builder()
-                        .id(0L)
-                        .name("user_1")
-                        .email("email_1@email.ru")
-                        .build(),
-                User.builder()
-                        .id(1L)
-                        .name("user_2")
-                        .email("email_2@email.ru")
-                        .build()
-        );
-        List<UserDto> expectedUserDtos = List.of(
-                UserDto.builder()
-                        .id(0L)
-                        .name("user_1")
-                        .email("email_1@email.ru")
-                        .build(),
-                UserDto.builder()
-                        .id(1L)
-                        .name("user_2")
-                        .email("email_2@email.ru")
-                        .build()
-        );
-        when(userRepository.findAll())
-                .thenReturn(foundUsers);
-
-        List<UserDto> actualUserDtos = userService.getAll();
-
-        assertThat(actualUserDtos, is(expectedUserDtos));
-    }
-
-    private User getValidUser() {
-        return User.builder()
-                .id(0L)
-                .name("name")
-                .email("email")
+    void delete_whenInvoked_thenUserDeleteFromDB() {
+        User user_1 = User.builder()
+                .name("user_1")
+                .email("user_1@email.ru")
                 .build();
+        Long savedUserId = userRepository.save(user_1).getId();
+
+        userService.delete(savedUserId);
+
+        assertTrue(userRepository.findById(savedUserId).isEmpty());
     }
 
-    private UserCreateDto getValidCreateDto() {
-        return UserCreateDto.builder()
-                .name("name")
-                .email("email")
-                .build();
-    }
+
 }
