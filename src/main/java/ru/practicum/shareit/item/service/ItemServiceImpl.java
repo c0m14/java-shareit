@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,8 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.model.Request;
+import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -37,6 +40,7 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final RequestRepository requestRepository;
     private final ItemMapper itemMapper;
     private final BookingMapper bookingMapper;
     private final CommentMapper commentMapper;
@@ -47,9 +51,23 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public ItemDto add(Long userId, ItemCreateDto itemCreateDto) {
         User owner = getUserById(userId);
-        Item item = itemMapper.mapToItem(itemCreateDto, owner);
+        Item itemToSave;
+        boolean hasRequest = itemCreateDto.getRequestId() != null;
 
-        return itemMapper.mapToDto(itemRepository.save(item));
+        if (hasRequest) {
+            Request itemRequest = getRequestById(itemCreateDto.getRequestId());
+            itemToSave = itemMapper.mapToItem(itemCreateDto, owner, itemRequest);
+        } else {
+            itemToSave = itemMapper.mapToItem(itemCreateDto, owner);
+        }
+
+        Item savedItem = itemRepository.save(itemToSave);
+
+        if (hasRequest) {
+            return itemMapper.mapToDto(savedItem, itemCreateDto.getRequestId());
+        } else {
+            return itemMapper.mapToDto(savedItem);
+        }
     }
 
     @Override
@@ -60,7 +78,12 @@ public class ItemServiceImpl implements ItemService {
 
         updateFields(updatedItem, itemDto);
 
-        return itemMapper.mapToDto(itemRepository.save(updatedItem));
+        Item savedItem = itemRepository.save(updatedItem);
+        if (savedItem.getRequest() != null) {
+            return itemMapper.mapToDto(savedItem, savedItem.getRequest().getRequestId());
+        } else {
+            return itemMapper.mapToDto(savedItem);
+        }
     }
 
     @Override
@@ -79,9 +102,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemWithBookingsAndCommentsDto> getUserItems(Long userId) {
+    public List<ItemWithBookingsAndCommentsDto> getUserItems(Long userId, int from, int size) {
         validateIfUserExist(userId);
-        return itemRepository.findByOwnerId(userId).stream()
+        PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size);
+
+        return itemRepository.findByOwnerId(pageRequest, userId).stream()
                 .map(item -> {
                     LastNextBookingDto last = findLastBooking(item.getId());
                     LastNextBookingDto next = findNextBooking(item.getId());
@@ -94,13 +119,14 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> searchItems(Long userId, String requestedText) {
+    public List<ItemDto> searchItems(Long userId, String requestedText, int from, int size) {
         if (requestedText.isBlank()) {
             return List.of();
         }
         validateIfUserExist(userId);
+        PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size);
 
-        return itemRepository.searchByText(requestedText)
+        return itemRepository.searchByText(pageRequest, requestedText)
                 .stream()
                 .map(itemMapper::mapToDto)
                 .collect(Collectors.toList()
@@ -123,6 +149,7 @@ public class ItemServiceImpl implements ItemService {
 
     private List<CommentDto> getCommentsDtoForItem(Long itemId) {
         return commentRepository.findByItemIdOrderByCreatedDesc(itemId).stream()
+                .filter(Objects::nonNull)
                 .map(commentMapper::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -204,6 +231,21 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getAvailable() != null) {
             updatedItem.setAvailable(itemDto.getAvailable());
         }
+        if (itemDto.getRequestId() != null) {
+            Request newRequest = getRequestById(itemDto.getRequestId());
+            updatedItem.setRequest(newRequest);
+        } else {
+            updatedItem.setRequest(null);
+        }
+    }
+
+    private Request getRequestById(Long requestId) {
+        return requestRepository.findById(requestId).orElseThrow(
+                () -> new NotExistsException(
+                        "Request",
+                        String.format("Request with id %d not exist", requestId)
+                )
+        );
     }
 
 }

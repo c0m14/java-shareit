@@ -8,7 +8,11 @@ create table if not exists users (
 
 create table if not exists request (
     request_id bigint generated always as identity not null,
-    constraint pk_request primary key (request_id)
+    description varchar not null,
+    owner_id bigint not null,
+    created timestamp without time zone not null,
+    constraint pk_request primary key (request_id),
+    constraint fk_request_to_users foreign key (owner_id) references users (user_id) on delete cascade
 );
 
 create table if not exists item (
@@ -19,8 +23,8 @@ create table if not exists item (
     available boolean not null,
     request_id bigint,
     constraint pk_item primary key (item_id),
-    constraint fk_item_to_users foreign key (owner_id) references users (user_id),
-    constraint fk_item_to_request foreign key (request_id) references request (request_id)
+    constraint fk_item_to_users foreign key (owner_id) references users (user_id) on delete cascade,
+    constraint fk_item_to_request foreign key (request_id) references request (request_id) on delete set null
 );
 
 create table if not exists booking (
@@ -31,8 +35,8 @@ create table if not exists booking (
     start_date_time timestamp without time zone not null,
     end_date_time timestamp without time zone not null,
     constraint pk_booking primary key (booking_id),
-    constraint fk_booking_to_users foreign key (booker_id) references users (user_id),
-    constraint fk_booking_to_item foreign key (item_id) references item (item_id)
+    constraint fk_booking_to_users foreign key (booker_id) references users (user_id) on delete cascade,
+    constraint fk_booking_to_item foreign key (item_id) references item (item_id) on delete cascade
 );
 
 create table if not exists comment (
@@ -42,6 +46,6 @@ create table if not exists comment (
     author_id bigint not null,
     created timestamp without time zone not null,
     constraint pk_comment primary key (comment_id),
-    constraint fk_comment_to_item foreign key (item_id) references item (item_id),
-    constraint fk_comment_to_users foreign key (author_id) references users (user_id)
+    constraint fk_comment_to_item foreign key (item_id) references item (item_id) on delete cascade,
+    constraint fk_comment_to_users foreign key (author_id) references users (user_id) on delete cascade
 );

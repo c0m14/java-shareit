@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.dto.LastNextBookingDto;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.model.Request;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
@@ -19,7 +20,16 @@ public class ItemMapper {
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
-                .itemRequestId(item.getItemRequest() != null ? item.getItemRequest().getRequestId() : null)
+                .build();
+    }
+
+    public ItemDto mapToDto(Item item, Long requestId) {
+        return ItemDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .requestId(requestId)
                 .build();
     }
 
@@ -36,7 +46,16 @@ public class ItemMapper {
                 .description(itemCreateDto.getDescription())
                 .available(itemCreateDto.getAvailable())
                 .owner(owner)
-                .itemRequest(itemCreateDto.getItemRequest())
+                .build();
+    }
+
+    public Item mapToItem(ItemCreateDto itemCreateDto, User owner, Request request) {
+        return Item.builder()
+                .name(itemCreateDto.getName())
+                .description(itemCreateDto.getDescription())
+                .available(itemCreateDto.getAvailable())
+                .owner(owner)
+                .request(request)
                 .build();
     }
 
