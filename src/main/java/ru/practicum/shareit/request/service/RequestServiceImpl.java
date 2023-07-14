@@ -1,6 +1,7 @@
 package ru.practicum.shareit.request.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,6 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,18 +49,16 @@ public class RequestServiceImpl implements RequestService {
         validateIfUserExist(ownerId);
         List<Request> userItemRequests = requestRepository.findAllByOwnerId(ownerId, sortByCreatedDesc);
 
-        return requestMapper.mapStreamToDto(userItemRequests.stream(), itemRepository);
+        return requestMapper.mapStreamToDto(userItemRequests.stream());
     }
 
     @Override
     @Transactional
     public List<RequestDto> getAllOtherUsersRequests(Long userId, int from, int size) {
         PageRequest pageRequest = PageRequest.of(from > 0 ? from / size : 0, size, sortByCreatedDesc);
+        Page<Request> requests = requestRepository.findAllExceptOwnerRequestsEager(userId, pageRequest);
 
-        return requestMapper.mapStreamToDto(
-                requestRepository.findAll(pageRequest).stream()
-                        .filter(request -> !Objects.equals(userId, request.getOwner().getId())),
-                itemRepository);
+        return requestMapper.mapStreamToDto(requests.stream());
     }
 
     @Override

@@ -70,7 +70,7 @@ class RequestServiceImplUnitTest {
         }
 
         verify(requestRepository, times(1))
-                .findAll(pageRequestArgumentCaptor.capture());
+                .findAllExceptOwnerRequestsEager(anyLong(), pageRequestArgumentCaptor.capture());
         assertThat(pageRequestArgumentCaptor.getValue().getPageNumber(), equalTo(0));
     }
 
@@ -87,7 +87,7 @@ class RequestServiceImplUnitTest {
         }
 
         verify(requestRepository, times(1))
-                .findAll(pageRequestArgumentCaptor.capture());
+                .findAllExceptOwnerRequestsEager(anyLong(), pageRequestArgumentCaptor.capture());
         assertThat(pageRequestArgumentCaptor.getValue().getPageNumber(), equalTo(0));
     }
 
@@ -104,7 +104,7 @@ class RequestServiceImplUnitTest {
         }
 
         verify(requestRepository, times(1))
-                .findAll(pageRequestArgumentCaptor.capture());
+                .findAllExceptOwnerRequestsEager(anyLong(), pageRequestArgumentCaptor.capture());
         assertThat(pageRequestArgumentCaptor.getValue().getPageNumber(), equalTo(from / size));
     }
 
@@ -121,7 +121,7 @@ class RequestServiceImplUnitTest {
         }
 
         verify(requestRepository, times(1))
-                .findAll(pageRequestArgumentCaptor.capture());
+                .findAllExceptOwnerRequestsEager(anyLong(), pageRequestArgumentCaptor.capture());
         assertThat(pageRequestArgumentCaptor.getValue().getSort(),
                 equalTo(Sort.by(Sort.Direction.DESC, "created")));
     }

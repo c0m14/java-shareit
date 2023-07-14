@@ -1,14 +1,13 @@
 package ru.practicum.shareit.request.model;
 
 import lombok.*;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
-/**
- * TODO Sprint add-item-requests.
- */
 
 @Entity
 @Table(name = "request")
@@ -22,16 +21,20 @@ public class Request {
     @Id
     @Column(name = "request_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long requestId;
+    private Long requestId;
 
     @Column(name = "description")
-    String description;
+    private String description;
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", referencedColumnName = "user_id")
-    User owner;
+    private User owner;
 
     @Column(name = "created")
-    LocalDateTime created;
+    private LocalDateTime created;
+
+    @ToString.Exclude
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "request")
+    private Set<Item> items;
 }

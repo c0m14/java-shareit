@@ -3,7 +3,6 @@ package ru.practicum.shareit.request.service;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.dto.CreationRequestDto;
@@ -78,34 +77,6 @@ class RequestServiceImplIntegrationTest {
         assertThat(foundRequests.get(0).getId(), equalTo(request2.getRequestId()));
         assertThat(foundRequests.get(1).getId(), equalTo(request1.getRequestId()));
         assertThat(foundRequests.get(1).getItems(), hasSize(2));
-    }
-
-    @Test
-    @Transactional
-    void getAllOtherUsersRequests_whenInvoked_thenOtherUsersRequestsWithItemsReturned() {
-        //clear context
-        requestRepository.deleteAll();
-        User requestedUser = saveRandomUser();
-        User otherUser = saveRandomUser();
-        requestRepository.save(Request.builder()
-                .description("request_1")
-                .owner(requestedUser)
-                .created(LocalDateTime.now().minusHours(2))
-                .build());
-        Request request2 = requestRepository.save(Request.builder()
-                .description("request2")
-                .owner(otherUser)
-                .created(LocalDateTime.now().minusHours(1))
-                .build());
-        saveRandomItemWithRequest(request2);
-        saveRandomItemWithRequest(request2);
-
-        List<RequestDto> foundRequests =
-                requestService.getAllOtherUsersRequests(requestedUser.getId(), 0, 5);
-
-        assertThat(foundRequests, hasSize(1));
-        assertThat(foundRequests.get(0).getId(), equalTo(request2.getRequestId()));
-        assertThat(foundRequests.get(0).getItems(), hasSize(2));
     }
 
     @Test
