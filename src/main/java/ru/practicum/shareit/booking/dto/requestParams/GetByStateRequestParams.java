@@ -3,8 +3,9 @@ package ru.practicum.shareit.booking.dto.requestParams;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class ChangeStatusRequestParams {
+public class GetByStateRequestParams {
     Long userId;
-    Long bookingId;
-    boolean approved;
+    String state;
+    int from;
+    int size;
 }

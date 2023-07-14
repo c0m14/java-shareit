@@ -7,18 +7,14 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.CreationRequestDto;
 import ru.practicum.shareit.request.dto.RequestDto;
 import ru.practicum.shareit.request.dto.RequestNoItemsDto;
-import ru.practicum.shareit.request.dto.requestParams.CreateRequestParams;
 import ru.practicum.shareit.request.dto.requestParams.GetAllRequestParams;
-import ru.practicum.shareit.request.dto.requestParams.GetByIdRequestParams;
 import ru.practicum.shareit.request.service.RequestService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.List;
 
-/**
- * TODO Sprint add-item-requests.
- */
+
 @RestController
 @RequestMapping(path = "/requests")
 @RequiredArgsConstructor
@@ -30,9 +26,7 @@ public class RequestController {
     @PostMapping
     public RequestNoItemsDto add(@RequestHeader("X-Sharer-User-Id") Long ownerId,
                                  @RequestBody @Valid CreationRequestDto requestDto) {
-        CreateRequestParams requestParams = new CreateRequestParams(ownerId, requestDto);
-
-        log.info("Got request to add item request with: {}", requestParams);
+        log.info("Got request to add item request with: ownerId {}, request {}", ownerId, requestDto);
         return requestService.add(ownerId, requestDto);
     }
 
@@ -57,10 +51,7 @@ public class RequestController {
     @GetMapping("/{id}")
     public RequestDto getById(@RequestHeader("X-Sharer-User-Id") Long userId,
                               @PathVariable("id") Long requestId) {
-
-        GetByIdRequestParams requestParams = new GetByIdRequestParams(userId, requestId);
-        log.info("Got request to get request with: {}", requestParams);
+        log.info("Got request to get request with: userId {}, requestId {}", userId, requestId);
         return requestService.getById(userId, requestId);
-
     }
 }
