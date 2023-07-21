@@ -2,6 +2,7 @@ package ru.practicum.shareit.gateway.user.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,8 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 @Slf4j
 @Validated
-public class UserController {
+@ConditionalOnProperty(name = "feature.toggles.useWebClient", havingValue = "false")
+public class UserControllerRestTemplateImpl {
 
     private final UserClient userClient;
 

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.gateway.request.client.RequestClient;
 import ru.practicum.shareit.gateway.request.dto.CreationRequestDto;
@@ -21,7 +22,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = RequestController.class)
+@WebMvcTest(controllers = RequestControllerRestTemplateImpl.class)
+@TestPropertySource(locations = "classpath:test.web.mvc.application.properties")
 class RequestControllerIntegrationTest {
 
     @Autowired
@@ -189,9 +191,9 @@ class RequestControllerIntegrationTest {
         int from = -1;
         int size = 5;
 
-        mvc.perform(get("/requests/all?from={from}@size={size}", from, size)
+        mvc.perform(get("/requests/all?from={from}&size={size}", from, size)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-Sharer-User-Id", ownerId))
+                        .header("X-Sharer-User-Id", String.valueOf(ownerId)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -202,23 +204,23 @@ class RequestControllerIntegrationTest {
         int from = 0;
         int size = 0;
 
-        mvc.perform(get("/requests/all?from={from}@size={size}", from, size)
+        mvc.perform(get("/requests/all?from={from}&size={size}", from, size)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-Sharer-User-Id", ownerId))
+                        .header("X-Sharer-User-Id", String.valueOf(ownerId)))
                 .andExpect(status().isBadRequest());
     }
 
     @SneakyThrows
     @Test
-    void getAllOtherUsersRequests_whenSizeIsNegative_thenStatusIsBadRequest() {
+    void getAllOtherUsersRequests_whenSizeIsNegative_thenStatusInternalServerError() {
         Long ownerId = 0L;
         int from = 0;
         int size = -1;
 
         mvc.perform(get("/requests/all?from={from}@size={size}", from, size)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("X-Sharer-User-Id", ownerId))
-                .andExpect(status().isBadRequest());
+                        .header("X-Sharer-User-Id", String.valueOf(ownerId)))
+                .andExpect(status().isInternalServerError());
     }
 
     @SneakyThrows

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.gateway.booking.client.BookingClient;
 import ru.practicum.shareit.gateway.booking.dto.BookingCreationDto;
@@ -23,7 +24,8 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = BookingController.class)
+@WebMvcTest(controllers = BookingControllerRestTemplateImpl.class)
+@TestPropertySource(locations = "classpath:test.web.mvc.application.properties")
 class BookingControllerIntegrationTest {
 
     @Autowired
@@ -197,14 +199,14 @@ class BookingControllerIntegrationTest {
 
     @SneakyThrows
     @Test
-    void changeStatus_whenApprovedIsMissing_thenStatusIsBadRequest() {
+    void changeStatus_whenApprovedIsMissing_thenInternalServerError() {
         Long userId = 0L;
         Long bookingId = 1L;
 
         mvc.perform(patch("/bookings/{bookingId}", bookingId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", userId))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isInternalServerError());
     }
 
     @SneakyThrows

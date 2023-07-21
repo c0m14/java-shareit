@@ -2,6 +2,7 @@ package ru.practicum.shareit.gateway.item.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,8 @@ import javax.validation.constraints.PositiveOrZero;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/items")
-public class ItemController {
+@ConditionalOnProperty(name = "feature.toggles.useWebClient", havingValue = "false")
+public class ItemControllerRestTemplateImpl {
 
     private final ItemClient itemClient;
 

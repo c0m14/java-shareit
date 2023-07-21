@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.gateway.user.client.UserClient;
 import ru.practicum.shareit.gateway.user.dto.UserCreateDto;
@@ -19,7 +20,8 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = UserController.class)
+@WebMvcTest(controllers = UserControllerRestTemplateImpl.class)
+@TestPropertySource(locations = "classpath:test.web.mvc.application.properties")
 class UserControllerIntegrationTest {
     @Autowired
     private ObjectMapper mapper;

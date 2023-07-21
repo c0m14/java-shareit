@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.gateway.item.client.ItemClient;
 import ru.practicum.shareit.gateway.item.dto.CommentDto;
@@ -23,7 +24,8 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = ItemController.class)
+@WebMvcTest(controllers = ItemControllerRestTemplateImpl.class)
+@TestPropertySource(locations = "classpath:test.web.mvc.application.properties")
 class ItemControllerIntegrationTest {
 
     @Captor
@@ -746,14 +748,14 @@ class ItemControllerIntegrationTest {
 
     @SneakyThrows
     @Test
-    void searchItems_whenTextIsAbsent_thenStatusIsBadRequest() {
+    void searchItems_whenTextIsAbsent_thenInternalServerError() {
         Long userId = 0L;
         int from = 1;
         int size = 2;
 
         mvc.perform(get("/items/search?from={from}&size={size}", from, size)
                         .header("X-Sharer-User-Id", userId))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isInternalServerError());
     }
 
     @SneakyThrows

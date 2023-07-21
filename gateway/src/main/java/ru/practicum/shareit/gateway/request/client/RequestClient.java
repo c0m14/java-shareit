@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import ru.practicum.shareit.gateway.BaseClient;
+import ru.practicum.shareit.gateway.baseClients.BaseClient;
 import ru.practicum.shareit.gateway.request.dto.CreationRequestDto;
 import ru.practicum.shareit.gateway.request.dto.requestParams.GetAllRequestParams;
 

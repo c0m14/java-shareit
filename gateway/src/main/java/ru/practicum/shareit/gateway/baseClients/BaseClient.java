@@ -1,4 +1,4 @@
-package ru.practicum.shareit.gateway;
+package ru.practicum.shareit.gateway.baseClients;
 
 import org.springframework.http.*;
 import org.springframework.lang.Nullable;

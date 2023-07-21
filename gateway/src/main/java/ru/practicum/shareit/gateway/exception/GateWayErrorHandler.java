@@ -53,12 +53,18 @@ public class GateWayErrorHandler {
         return new ErrorResponse(e.getParamName(), e.getMessage());
     }
 
-
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMissingRequestHeaderException(MissingRequestHeaderException e) {
         log.error(e.getMessage());
         return new ErrorResponse(e.getHeaderName(), e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleThrowable(Throwable e) {
+        log.error(e.getMessage(), e);
+        return new ErrorResponse("Unrecognized param", e.getMessage());
     }
 
     @Getter
