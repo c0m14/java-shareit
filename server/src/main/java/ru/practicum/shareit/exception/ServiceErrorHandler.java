@@ -43,6 +43,13 @@ public class ServiceErrorHandler {
         return new ErrorResponse(e.getHeaderName(), e.getMessage());
     }
 
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleThrowable(Throwable e) {
+        log.error(e.getMessage(), e);
+        return new ErrorResponse("Unrecognized param", e.getMessage());
+    }
+
     @Getter
     @AllArgsConstructor
     private class ErrorResponseList {
