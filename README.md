@@ -9,6 +9,16 @@
 Проект реализован как многомодульный - отдельно вынесенен шлюз (gateway), осуществляющий первичную валидацию запросов и   
 проксирующий их в сторону основного сервиса (server)
 
+### stack
+
+- Java 11
+- Spring Boot
+- JPA (Hibernate 5.6)
+- PosgreSQL (and H2 for CI and test)
+- RestTemplate / WebClient (separate client realizations)
+- Docker
+- Lombok
+
 ## main educational purposes
 - Освоить работу с JPA и ORM (Hibernate)
 - Использование альтернативной структуры проекта (feature layout)
