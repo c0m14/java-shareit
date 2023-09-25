@@ -9,6 +9,11 @@
 Проект реализован как многомодульный - отдельно вынесенен шлюз (gateway), осуществляющий первичную валидацию запросов и   
 проксирующий их в сторону основного сервиса (server)
 
+### my other edu projects
+- [(1) Kanban (Трекер задач а-ля Jira)](https://github.com/c0m14/java-kanban/blob/main/README.md)
+- [(2) Filmorate (Сервис для оценки и рекомендации фильмов)](https://github.com/c0m14/java-filmorate/blob/main/README.md)
+- [(4) Explore-with-me (Агрегатор мероприятий а-ля Афиша, дипломный проект)](https://github.com/c0m14/graduate_java-explore-with-me/blob/main/README.md)
+
 ### stack
 
 - Java 11
